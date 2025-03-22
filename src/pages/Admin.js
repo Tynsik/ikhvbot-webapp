@@ -89,13 +89,6 @@ function Admin() {
     setForm({ id: null, type: 'news', title: '', description: '', source: '', image: '', name: '', category: '', lat: '', lng: '' });
   };
 
-  // Функция для форматирования текста с переносами строк
-  const formatDescription = (text) => {
-    return text.split('\n').map((line, index) => (
-      <p key={index} className="description-line">{line}</p>
-    ));
-  };
-
   if (!isAuthenticated) {
     return (
       <div className="admin-panel">
@@ -147,7 +140,7 @@ function Admin() {
       <h2>Текущие новости</h2>
       {news.map(item => (
         <div key={item._id} className="content-item">
-          <div className="description">{formatDescription(`${item.title} - ${item.description}`)}</div>
+          <p>{item.title} - {item.description}</p>
           <div>
             <button onClick={() => handleEdit(item, 'news')}>Редактировать</button>
             <button onClick={() => handleDelete('news', item._id)}>Удалить</button>
@@ -158,7 +151,7 @@ function Admin() {
       <h2>Текущие места</h2>
       {places.map(item => (
         <div key={item._id} className="content-item">
-          <div className="description">{formatDescription(`${item.name} - ${item.description}`)}</div>
+          <p>{item.name} - {item.description}</p>
           <div>
             <button onClick={() => handleEdit(item, 'places')}>Редактировать</button>
             <button onClick={() => handleDelete('places', item._id)}>Удалить</button>
