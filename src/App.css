@@ -100,10 +100,23 @@ img {
   border-bottom: 1px solid #ddd;
 }
 
-.content-item button {
-  background-color: #dc3545;
+.content-item div {
+  display: flex;
+  gap: 10px;
 }
 
-.content-item button:hover {
+.content-item button:nth-child(1) {
+  background-color: #28a745; /* Редактировать - зелёный */
+}
+
+.content-item button:nth-child(1):hover {
+  background-color: #218838;
+}
+
+.content-item button:nth-child(2) {
+  background-color: #dc3545; /* Удалить - красный */
+}
+
+.content-item button:nth-child(2):hover {
   background-color: #c82333;
 }

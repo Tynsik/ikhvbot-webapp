@@ -6,7 +6,7 @@ function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('adminToken'));
   const [news, setNews] = useState([]);
   const [places, setPlaces] = useState([]);
-  const [form, setForm] = useState({ type: 'news', title: '', description: '', source: '', image: '', name: '', category: '', lat: '', lng: '' });
+  const [form, setForm] = useState({ id: null, type: 'news', title: '', description: '', source: '', image: '', name: '', category: '', lat: '', lng: '' });
 
   // Загрузка данных
   useEffect(() => {
@@ -31,9 +31,16 @@ function Admin() {
       : { name: form.name, category: form.category, description: form.description, location: { lat: Number(form.lat), lng: Number(form.lng) }, image: form.image };
 
     try {
-      await axios.post(`https://ikhvbot-server.onrender.com${url}`, data, { headers });
-      alert('Контент добавлен');
-      setForm({ type: 'news', title: '', description: '', source: '', image: '', name: '', category: '', lat: '', lng: '' });
+      if (form.id) {
+        // Редактирование
+        await axios.put(`https://ikhvbot-server.onrender.com${url}/${form.id}`, data, { headers });
+        alert('Контент обновлён');
+      } else {
+        // Добавление
+        await axios.post(`https://ikhvbot-server.onrender.com${url}`, data, { headers });
+        alert('Контент добавлен');
+      }
+      setForm({ id: null, type: 'news', title: '', description: '', source: '', image: '', name: '', category: '', lat: '', lng: '' });
       refreshData();
     } catch (error) {
       alert('Ошибка: ' + (error.response?.data?.error || 'Неизвестная ошибка'));
@@ -52,10 +59,43 @@ function Admin() {
     }
   };
 
+  // Редактирование
+  const handleEdit = (item, type) => {
+    if (type === 'news') {
+      setForm({
+        id: item._id,
+        type: 'news',
+        title: item.title,
+        description: item.description,
+        source: item.source,
+        image: item.image,
+        name: '', category: '', lat: '', lng: ''
+      });
+    } else {
+      setForm({
+        id: item._id,
+        type: 'places',
+        title: '',
+        description: item.description,
+        source: '',
+        image: item.image,
+        name: item.name,
+        category: item.category,
+        lat: item.location.lat.toString(),
+        lng: item.location.lng.toString()
+      });
+    }
+  };
+
   // Обновление данных
   const refreshData = () => {
     axios.get('https://ikhvbot-server.onrender.com/api/news').then(res => setNews(res.data));
     axios.get('https://ikhvbot-server.onrender.com/api/places').then(res => setPlaces(res.data));
+  };
+
+  // Очистка формы
+  const handleReset = () => {
+    setForm({ id: null, type: 'news', title: '', description: '', source: '', image: '', name: '', category: '', lat: '', lng: '' });
   };
 
   if (!isAuthenticated) {
@@ -79,7 +119,7 @@ function Admin() {
     <div className="admin-panel">
       <h1>Админка</h1>
       <button onClick={() => { localStorage.removeItem('adminToken'); setIsAuthenticated(false); }}>Выйти</button>
-      <h2>Добавить контент</h2>
+      <h2>{form.id ? 'Редактировать контент' : 'Добавить контент'}</h2>
       <form onSubmit={handleSubmit}>
         <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
           <option value="news">Новость</option>
@@ -102,14 +142,18 @@ function Admin() {
             <input placeholder="URL изображения" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} />
           </>
         )}
-        <button type="submit">Добавить</button>
+        <button type="submit">{form.id ? 'Сохранить изменения' : 'Добавить'}</button>
+        {form.id && <button type="button" onClick={handleReset}>Отменить редактирование</button>}
       </form>
 
       <h2>Текущие новости</h2>
       {news.map(item => (
         <div key={item._id} className="content-item">
           <p>{item.title} - {item.description}</p>
-          <button onClick={() => handleDelete('news', item._id)}>Удалить</button>
+          <div>
+            <button onClick={() => handleEdit(item, 'news')}>Редактировать</button>
+            <button onClick={() => handleDelete('news', item._id)}>Удалить</button>
+          </div>
         </div>
       ))}
 
@@ -117,7 +161,10 @@ function Admin() {
       {places.map(item => (
         <div key={item._id} className="content-item">
           <p>{item.name} - {item.description}</p>
-          <button onClick={() => handleDelete('places', item._id)}>Удалить</button>
+          <div>
+            <button onClick={() => handleEdit(item, 'places')}>Редактировать</button>
+            <button onClick={() => handleDelete('places', item._id)}>Удалить</button>
+          </div>
         </div>
       ))}
     </div>
