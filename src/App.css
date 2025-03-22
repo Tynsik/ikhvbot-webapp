@@ -58,3 +58,52 @@ img {
   height: auto;
   border-radius: 5px;
 }
+.admin-panel {
+  padding: 20px;
+}
+
+.admin-panel form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 400px;
+  margin: 20px 0;
+}
+
+.admin-panel input,
+.admin-panel textarea,
+.admin-panel select {
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.admin-panel button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.admin-panel button:hover {
+  background-color: #0056b3;
+}
+
+.content-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.content-item button {
+  background-color: #dc3545;
+}
+
+.content-item button:hover {
+  background-color: #c82333;
+}

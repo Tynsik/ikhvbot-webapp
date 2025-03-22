@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import News from './pages/News';
 import Places from './pages/Places';
+import Admin from './pages/Admin';
 import './App.css';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
             <Link to="/">Главная</Link>
             <Link to="/news">Новости</Link>
             <Link to="/places">Места</Link>
+            <Link to="/admin">Админка</Link>
           </nav>
         </header>
         <main className="main-content">
@@ -29,6 +31,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/news" element={<News />} />
             <Route path="/places" element={<Places />} />
+            <Route path="/admin" element={<Admin />} />
           </Routes>
         </main>
         <footer className="footer">
