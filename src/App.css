@@ -120,3 +120,17 @@ img {
 .content-item button:nth-child(2):hover {
   background-color: #c82333;
 }
+.place-item {
+  margin-bottom: 20px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.description {
+  margin: 10px 0;
+}
+
+.description-line {
+  margin: 5px 0; /* Отступ между параграфами */
+  line-height: 1.5; /* Улучшенная читаемость */
+}

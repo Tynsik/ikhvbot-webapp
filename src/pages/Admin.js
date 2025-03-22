@@ -8,20 +8,17 @@ function Admin() {
   const [places, setPlaces] = useState([]);
   const [form, setForm] = useState({ id: null, type: 'news', title: '', description: '', source: '', image: '', name: '', category: '', lat: '', lng: '' });
 
-  // Загрузка данных
   useEffect(() => {
     axios.get('https://ikhvbot-server.onrender.com/api/news').then(res => setNews(res.data));
     axios.get('https://ikhvbot-server.onrender.com/api/places').then(res => setPlaces(res.data));
   }, []);
 
-  // Авторизация
   const handleLogin = (e) => {
     e.preventDefault();
     localStorage.setItem('adminToken', token);
     setIsAuthenticated(true);
   };
 
-  // Добавление или редактирование
   const handleSubmit = async (e) => {
     e.preventDefault();
     const headers = { Authorization: token };
@@ -32,11 +29,9 @@ function Admin() {
 
     try {
       if (form.id) {
-        // Редактирование
         await axios.put(`https://ikhvbot-server.onrender.com${url}/${form.id}`, data, { headers });
         alert('Контент обновлён');
       } else {
-        // Добавление
         await axios.post(`https://ikhvbot-server.onrender.com${url}`, data, { headers });
         alert('Контент добавлен');
       }
@@ -47,7 +42,6 @@ function Admin() {
     }
   };
 
-  // Удаление
   const handleDelete = async (type, id) => {
     const headers = { Authorization: token };
     try {
@@ -59,7 +53,6 @@ function Admin() {
     }
   };
 
-  // Редактирование
   const handleEdit = (item, type) => {
     if (type === 'news') {
       setForm({
@@ -87,15 +80,20 @@ function Admin() {
     }
   };
 
-  // Обновление данных
   const refreshData = () => {
     axios.get('https://ikhvbot-server.onrender.com/api/news').then(res => setNews(res.data));
     axios.get('https://ikhvbot-server.onrender.com/api/places').then(res => setPlaces(res.data));
   };
 
-  // Очистка формы
   const handleReset = () => {
     setForm({ id: null, type: 'news', title: '', description: '', source: '', image: '', name: '', category: '', lat: '', lng: '' });
+  };
+
+  // Функция для форматирования текста с переносами строк
+  const formatDescription = (text) => {
+    return text.split('\n').map((line, index) => (
+      <p key={index} className="description-line">{line}</p>
+    ));
   };
 
   if (!isAuthenticated) {
@@ -149,7 +147,7 @@ function Admin() {
       <h2>Текущие новости</h2>
       {news.map(item => (
         <div key={item._id} className="content-item">
-          <p>{item.title} - {item.description}</p>
+          <div className="description">{formatDescription(`${item.title} - ${item.description}`)}</div>
           <div>
             <button onClick={() => handleEdit(item, 'news')}>Редактировать</button>
             <button onClick={() => handleDelete('news', item._id)}>Удалить</button>
@@ -160,7 +158,7 @@ function Admin() {
       <h2>Текущие места</h2>
       {places.map(item => (
         <div key={item._id} className="content-item">
-          <p>{item.name} - {item.description}</p>
+          <div className="description">{formatDescription(`${item.name} - ${item.description}`)}</div>
           <div>
             <button onClick={() => handleEdit(item, 'places')}>Редактировать</button>
             <button onClick={() => handleDelete('places', item._id)}>Удалить</button>
